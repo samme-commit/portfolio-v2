@@ -6,10 +6,12 @@ import { Work } from './sections/Work'
 import { Playground } from './sections/Playground'
 import { Personal } from './sections/Personal'
 import { Contact } from './sections/Contact'
+import { CustomCursor } from './components/effects/CustomCursor'
 
 function App() {
   return (
     <div className="site">
+      <CustomCursor />
       <FloatingNav />
 
       <main>

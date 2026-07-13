@@ -1,27 +1,63 @@
-import type { PointerEvent as ReactPointerEvent } from 'react'
+import {
+  useEffect,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
+
+import { MagneticLink } from '../ui/MagneticLink'
+import { useLocalTime } from '../../hooks/useLocalTime'
+import { useScrambleText } from '../../hooks/useScrambleText'
 
 import './IdentityCard.css'
 
-const profileDetails = [
-  {
-    label: 'Location',
-    value: 'Piteå, Sweden',
-  },
-  {
-    label: 'Focus',
-    value: 'Digital experiences',
-  },
-  {
-    label: 'Main stack',
-    value: 'React & TypeScript',
-  },
-  {
-    label: 'Currently',
-    value: 'Building RiftScout',
-  },
-]
+const roleWords = [
+  'Creative developer',
+  'Frontend developer',
+  'Problem solver',
+  'Curious builder',
+] as const
 
 export function IdentityCard() {
+  const localTime = useLocalTime()
+  const roleText = useScrambleText(roleWords)
+
+  const [markClicks, setMarkClicks] = useState(0)
+  const [isEasterEggActive, setIsEasterEggActive] =
+    useState(false)
+
+  const profileDetails = [
+    {
+      label: 'Location',
+      value: 'Piteå, Sweden',
+    },
+    {
+      label: 'Local time',
+      value: `${localTime} · Piteå`,
+    },
+    {
+      label: 'Main stack',
+      value: 'React & TypeScript',
+    },
+    {
+      label: 'Currently',
+      value: 'Building RiftScout',
+    },
+  ]
+
+  useEffect(() => {
+    if (!isEasterEggActive) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsEasterEggActive(false)
+    }, 3600)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [isEasterEggActive])
+
   function handlePointerMove(
     event: ReactPointerEvent<HTMLElement>,
   ) {
@@ -58,9 +94,23 @@ export function IdentityCard() {
     card.style.setProperty('--rotate-y', '0deg')
   }
 
+  function handleMarkClick() {
+    const nextClickCount = markClicks + 1
+
+    if (nextClickCount >= 5) {
+      setMarkClicks(0)
+      setIsEasterEggActive(true)
+      return
+    }
+
+    setMarkClicks(nextClickCount)
+  }
+
   return (
     <article
-      className="identity-card"
+      className={`identity-card${
+        isEasterEggActive ? ' is-easter-egg' : ''
+      }`}
       aria-labelledby="identity-card-title"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
@@ -70,14 +120,25 @@ export function IdentityCard() {
         aria-hidden="true"
       />
 
+      <div
+        className="identity-card__easter-egg"
+        role="status"
+        aria-live="polite"
+      >
+        <span>// easter egg 01</span>
+        <strong>Curiosity unlocked.</strong>
+      </div>
+
       <header className="identity-card__header">
-        <a
+        <button
           className="identity-card__mark"
-          href="#home"
-          aria-label="Samuel Oxenby, back to start"
+          type="button"
+          aria-label="Samuel Oxenby"
+          data-cursor="Click"
+          onClick={handleMarkClick}
         >
           SO
-        </a>
+        </button>
 
         <div className="identity-card__availability">
           <span
@@ -103,8 +164,8 @@ export function IdentityCard() {
             id="identity-card-title"
             className="identity-card__title"
           >
-            samme
-            <span> commit.</span>
+            Samuel
+            <span> Oxenby.</span>
           </h1>
 
           <p className="identity-card__description">
@@ -114,23 +175,25 @@ export function IdentityCard() {
           </p>
 
           <div className="identity-card__actions">
-            <a
+            <MagneticLink
               className="identity-card__button identity-card__button--primary"
               href="#work"
+              data-cursor="View"
             >
               Utforska mina projekt
               <span aria-hidden="true">↘</span>
-            </a>
+            </MagneticLink>
 
-            <a
+            <MagneticLink
               className="identity-card__button identity-card__button--secondary"
               href="https://github.com/samme-commit"
               target="_blank"
               rel="noreferrer"
+              data-cursor="Open"
             >
               GitHub
               <span aria-hidden="true">↗</span>
-            </a>
+            </MagneticLink>
           </div>
         </div>
 
@@ -169,7 +232,7 @@ export function IdentityCard() {
             <span className="identity-card__initials">SO</span>
 
             <span className="identity-card__role">
-              Creative developer
+              {roleText}
             </span>
           </div>
 

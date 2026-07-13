@@ -886,3 +886,173 @@
     display: none;
   }
 }
+
+.identity-card,
+.identity-card * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.identity-card__mark {
+  padding: 0;
+}
+
+.identity-card__role {
+  display: block;
+  min-width: 8.5rem;
+
+  overflow: hidden;
+
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.identity-card__detail dd {
+  font-variant-numeric: tabular-nums;
+}
+
+.identity-card__button {
+  --magnetic-x: 0px;
+  --magnetic-y: 0px;
+
+  transform: translate3d(
+    var(--magnetic-x),
+    var(--magnetic-y),
+    0
+  );
+
+  will-change: transform;
+}
+
+.identity-card__button:hover {
+  transform: translate3d(
+    var(--magnetic-x),
+    calc(var(--magnetic-y) - 0.15rem),
+    0
+  );
+}
+
+.identity-card__button:active {
+  transform:
+    translate3d(
+      var(--magnetic-x),
+      var(--magnetic-y),
+      0
+    )
+    scale(0.97);
+}
+
+.identity-card__easter-egg {
+  position: absolute;
+  z-index: 20;
+  top: 5.5rem;
+  right: 1.5rem;
+
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  padding: 0.85rem 1rem;
+
+  color: var(--color-text);
+
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 45, 155, 0.2);
+  border-radius: 1rem;
+
+  box-shadow:
+    0 1rem 2.5rem rgba(35, 17, 28, 0.12),
+    0 0 2rem rgba(255, 45, 155, 0.1);
+
+  opacity: 0;
+  pointer-events: none;
+
+  backdrop-filter: blur(1rem);
+
+  transform: translateY(-0.75rem) scale(0.94);
+
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-slow);
+}
+
+.identity-card__easter-egg span {
+  color: var(--color-accent);
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.identity-card__easter-egg strong {
+  font-size: 0.82rem;
+}
+
+.identity-card.is-easter-egg .identity-card__easter-egg {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.identity-card.is-easter-egg .identity-card__avatar {
+  animation: easter-egg-avatar 900ms
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.identity-card.is-easter-egg
+  .identity-card__orbit-track--outer {
+  animation-duration: 5s;
+}
+
+.identity-card.is-easter-egg
+  .identity-card__orbit-track--middle {
+  animation-duration: 4s;
+}
+
+.identity-card.is-easter-egg .identity-card__spark {
+  animation: easter-egg-spark 700ms ease-in-out infinite
+    alternate;
+}
+
+@keyframes easter-egg-avatar {
+  0% {
+    transform: scale(1) rotate(0);
+  }
+
+  35% {
+    transform: scale(1.12) rotate(-8deg);
+  }
+
+  65% {
+    transform: scale(0.96) rotate(6deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes easter-egg-spark {
+  to {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+}
+
+@media (max-width: 600px) {
+  .identity-card__easter-egg {
+    top: 4.75rem;
+    right: 1rem;
+  }
+
+  .identity-card__role {
+    min-width: 7rem;
+    font-size: 0.5rem;
+  }
+}

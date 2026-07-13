@@ -6,81 +6,80 @@ import { Section } from '../components/layout/Section'
 
 import './Hero.css'
 
-function clamp(value: number, minimum: number, maximum: number) {
+function clamp(
+  value: number,
+  minimum: number,
+  maximum: number,
+) {
   return Math.min(Math.max(value, minimum), maximum)
+}
+
+function smoothStep(progress: number) {
+  return progress * progress * (3 - 2 * progress)
 }
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const hero = heroRef.current
+    const heroElement = heroRef.current
 
-    if (!hero) {
-      return
-    }
-
-    const reducedMotionQuery = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    )
-
-    if (reducedMotionQuery.matches) {
+    if (!heroElement) {
       return
     }
 
     let animationFrame = 0
 
     function updateHeroProgress() {
-      if (!hero) {
-        return
-      }
+      const bounds = heroElement.getBoundingClientRect()
 
-      const bounds = hero.getBoundingClientRect()
+      /*
+       * Låt besökaren se hela kortet innan exit-animationen
+       * börjar. Animationen startar först efter cirka 20vh.
+       */
+      const scrolledDistance = Math.max(-bounds.top, 0)
+      const exitStart = window.innerHeight * 0.2
+      const exitDistance = window.innerHeight * 0.7
 
-      const scrollDistance = Math.max(
-        hero.offsetHeight - window.innerHeight,
-        1,
-      )
-
-      const progress = clamp(
-        -bounds.top / scrollDistance,
+      const rawProgress = clamp(
+        (scrolledDistance - exitStart) / exitDistance,
         0,
         1,
       )
 
-      const scale = 1 - progress * 0.13
-      const opacity = 1 - progress * 0.72
-      const translateY = progress * -4
-      const translateZ = progress * -240
-      const blur = progress * 2.2
-      const cueOpacity = clamp(1 - progress * 2.2, 0, 1)
+      const progress = smoothStep(rawProgress)
 
-      hero.style.setProperty(
+      const scale = 1 - progress * 0.12
+      const opacity = 1 - progress * 0.78
+      const translateY = progress * -3.5
+      const translateZ = progress * -220
+      const cueOpacity = clamp(
+        1 - rawProgress * 3,
+        0,
+        1,
+      )
+
+      heroElement.style.setProperty(
         '--hero-scale',
         scale.toFixed(4),
       )
 
-      hero.style.setProperty(
+      heroElement.style.setProperty(
         '--hero-opacity',
         opacity.toFixed(4),
       )
 
-      hero.style.setProperty(
+      heroElement.style.setProperty(
         '--hero-translate-y',
         `${translateY}rem`,
       )
 
-      hero.style.setProperty(
+      heroElement.style.setProperty(
         '--hero-translate-z',
         `${translateZ}px`,
       )
 
-      hero.style.setProperty(
-        '--hero-blur',
-        `${blur}px`,
-      )
-
-      hero.style.setProperty(
+      heroElement.style.setProperty(
         '--hero-cue-opacity',
         cueOpacity.toFixed(4),
       )

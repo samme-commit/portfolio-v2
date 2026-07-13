@@ -3,7 +3,6 @@
   --hero-opacity: 1;
   --hero-translate-y: 0rem;
   --hero-translate-z: 0px;
-  --hero-blur: 0px;
   --hero-cue-opacity: 1;
 
   position: relative;
@@ -11,7 +10,7 @@
   isolation: isolate;
 
   display: block;
-  min-height: 150svh;
+  min-height: 190svh;
   padding: 0;
 
   background:
@@ -34,7 +33,6 @@
     4.5rem 4.5rem,
     4.5rem 4.5rem;
 
-  cursor: default;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -46,14 +44,14 @@
   bottom: 0;
   left: 0;
 
-  height: 22svh;
+  height: 18svh;
 
   content: '';
 
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(255, 250, 251, 0.95)
+    rgba(255, 250, 251, 0.96)
   );
 
   pointer-events: none;
@@ -64,13 +62,10 @@
   top: 0;
 
   display: flex;
+  width: 100%;
   min-height: 100svh;
-  align-items: center;
-
-  padding:
-    clamp(7rem, 11vw, 9rem)
-    0
-    clamp(3rem, 6vw, 5rem);
+  align-items: flex-start;
+  justify-content: center;
 
   overflow: hidden;
 }
@@ -95,12 +90,16 @@
 .hero__container {
   position: relative;
   z-index: 2;
+
+  width: 100%;
+  padding-top: clamp(5.25rem, 8vh, 6.75rem);
+  padding-bottom: 2rem;
 }
 
 .hero__card-shell {
-  opacity: var(--hero-opacity);
+  width: 100%;
 
-  filter: blur(var(--hero-blur));
+  opacity: var(--hero-opacity);
 
   transform:
     perspective(75rem)
@@ -115,10 +114,9 @@
 
   transition:
     transform 70ms linear,
-    opacity 70ms linear,
-    filter 70ms linear;
+    opacity 70ms linear;
 
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
 }
 
 .hero__ambient {
@@ -157,7 +155,7 @@
   justify-content: center;
   gap: 1rem;
 
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 
   color: var(--color-text-muted);
   font-size: 0.68rem;
@@ -167,8 +165,7 @@
 
   opacity: var(--hero-cue-opacity);
 
-  animation: scroll-cue-enter 700ms 500ms
-    cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: opacity 80ms linear;
 }
 
 .hero__scroll-line {
@@ -195,18 +192,6 @@
   animation: scroll-line-move 2.2s ease-in-out infinite;
 }
 
-@keyframes scroll-cue-enter {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-
-  to {
-    opacity: var(--hero-cue-opacity);
-    transform: translateY(0);
-  }
-}
-
 @keyframes scroll-line-move {
   0% {
     transform: translateX(-100%);
@@ -218,18 +203,36 @@
   }
 }
 
-@media (max-width: 600px) {
+/*
+ * På mobil är kortet högre än viewporten.
+ * Därför använder vi ingen sticky-exit där ännu.
+ */
+@media (max-width: 700px) {
   .hero {
-    min-height: 140svh;
+    min-height: auto;
   }
 
   .hero__stage {
-    align-items: flex-start;
-    padding-top: 6.5rem;
+    position: relative;
+
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .hero__container {
+    padding-top: 6.25rem;
+    padding-bottom: 5rem;
+  }
+
+  .hero__card-shell {
+    opacity: 1 !important;
+
+    transform: none !important;
+    transition: none;
   }
 
   .hero__scroll-cue {
-    margin-top: 1.5rem;
+    display: none;
   }
 }
 
@@ -244,7 +247,6 @@
 
   .hero__card-shell {
     opacity: 1;
-    filter: none;
     transform: none;
     transition: none;
   }

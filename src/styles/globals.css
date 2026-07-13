@@ -54,10 +54,12 @@ svg {
 }
 
 .container {
-  width: min(
-    100% - (var(--container-padding) * 2),
-    var(--container-width)
+  width: calc(
+    100% -
+    var(--container-padding) -
+    var(--container-padding)
   );
+  max-width: var(--container-width);
   margin-inline: auto;
 }
 

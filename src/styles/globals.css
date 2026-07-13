@@ -49,9 +49,8 @@ svg {
 
 .site {
   position: relative;
-
   min-height: 100vh;
-  overflow: clip;
+  overflow-x: clip;
 }
 
 .container {

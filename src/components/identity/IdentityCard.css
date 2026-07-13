@@ -1,4 +1,9 @@
 .identity-card {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+
   position: relative;
 
   width: 100%;
@@ -22,21 +27,62 @@
     0 0 0 0.5rem rgba(255, 255, 255, 0.55),
     0 0 5rem rgba(255, 45, 155, 0.08);
 
+  transform:
+    perspective(87.5rem)
+    rotateX(var(--rotate-x))
+    rotateY(var(--rotate-y));
+
+  transform-style: preserve-3d;
+
   animation: identity-card-enter 850ms
-    cubic-bezier(0.22, 1, 0.36, 1) both;
+    cubic-bezier(0.22, 1, 0.36, 1);
 
   transition:
-    transform var(--transition-slow),
+    transform 180ms ease-out,
     box-shadow var(--transition-slow);
+
+  will-change: transform;
 }
 
 .identity-card:hover {
   box-shadow:
     0 2.5rem 7rem rgba(35, 17, 28, 0.13),
     0 0 0 0.5rem rgba(255, 255, 255, 0.65),
-    0 0 6rem rgba(255, 45, 155, 0.12);
+    0 0 6rem rgba(255, 45, 155, 0.15);
 
-  transform: translateY(-0.3rem);
+  transform:
+    perspective(87.5rem)
+    rotateX(var(--rotate-x))
+    rotateY(var(--rotate-y))
+    translateY(-0.3rem);
+}
+
+.identity-card__spotlight {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle 24rem at var(--pointer-x) var(--pointer-y),
+      rgba(255, 45, 155, 0.13),
+      rgba(255, 45, 155, 0.045) 35%,
+      transparent 70%
+    );
+
+  opacity: 0.35;
+  pointer-events: none;
+
+  transition: opacity var(--transition-base);
+}
+
+.identity-card:hover .identity-card__spotlight {
+  opacity: 1;
+}
+
+.identity-card::before,
+.identity-card::after {
+  z-index: 0;
 }
 
 .identity-card::before {
@@ -158,6 +204,7 @@
 .identity-card__body {
   position: relative;
   z-index: 1;
+  transform-style: preserve-3d;
 
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 0.75fr);
@@ -170,6 +217,7 @@
 }
 
 .identity-card__content {
+  transform: translateZ(1.25rem);
   position: relative;
   z-index: 2;
 }
@@ -299,6 +347,7 @@
 
 .identity-card__visual {
   position: relative;
+  transform: translateZ(1.75rem);
 
   display: grid;
   width: min(100%, 22rem);
@@ -335,12 +384,7 @@
     0 2rem 4rem rgba(255, 45, 155, 0.12);
 }
 
-.identity-card__orbit {
-  position: absolute;
 
-  border: 1px solid rgba(255, 45, 155, 0.18);
-  border-radius: 50%;
-}
 
 .identity-card__orbit--outer {
   inset: 0;
@@ -427,11 +471,124 @@
   left: -4%;
 }
 
-.identity-card__tech--typescript {
-  right: -7%;
-  bottom: 18%;
+.identity-card__orbit-track {
+  --orbit-radius: 10rem;
 
-  transform: rotate(180deg);
+  position: absolute;
+
+  border: 1px solid rgba(255, 45, 155, 0.18);
+  border-radius: 50%;
+
+  transform-style: preserve-3d;
+}
+
+.identity-card__orbit-track--outer {
+  --orbit-radius: 10.4rem;
+
+  inset: 0;
+
+  animation: orbit-clockwise 30s linear infinite;
+}
+
+.identity-card__orbit-track--middle {
+  --orbit-radius: 6.9rem;
+
+  inset: 17%;
+
+  border-style: dashed;
+  border-color: rgba(255, 45, 155, 0.15);
+
+  animation: orbit-counter-clockwise 23s linear infinite;
+}
+
+.identity-card__orbit-track--inner {
+  inset: 34%;
+
+  border-color: rgba(255, 45, 155, 0.22);
+
+  animation: orbit-clockwise 17s linear infinite;
+}
+
+.identity-card__orbit-tech {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--orbit-angle))
+    translateX(var(--orbit-radius))
+    rotate(var(--orbit-counter-angle));
+}
+
+.identity-card__orbit-tech > span {
+  display: inline-flex;
+  min-height: 2.2rem;
+  align-items: center;
+  justify-content: center;
+
+  padding-inline: 0.85rem;
+
+  color: var(--color-text);
+  font-size: 0.68rem;
+  font-weight: 750;
+  white-space: nowrap;
+
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 45, 155, 0.14);
+  border-radius: var(--radius-pill);
+
+  box-shadow:
+    0 0.75rem 1.75rem rgba(35, 17, 28, 0.09),
+    0 0 1.25rem rgba(255, 45, 155, 0.06);
+
+  backdrop-filter: blur(0.75rem);
+  -webkit-backdrop-filter: blur(0.75rem);
+}
+
+.identity-card__orbit-track--outer
+  .identity-card__orbit-tech > span {
+  animation: orbit-counter-clockwise 30s linear infinite;
+}
+
+.identity-card__orbit-track--middle
+  .identity-card__orbit-tech > span {
+  animation: orbit-clockwise 23s linear infinite;
+}
+
+.identity-card__orbit-tech--react {
+  --orbit-angle: 205deg;
+  --orbit-counter-angle: -205deg;
+}
+
+.identity-card__orbit-tech--typescript {
+  --orbit-angle: 325deg;
+  --orbit-counter-angle: -325deg;
+}
+
+.identity-card__orbit-tech--next {
+  --orbit-angle: 85deg;
+  --orbit-counter-angle: -85deg;
+}
+
+.identity-card__orbit-tech--html {
+  --orbit-angle: 15deg;
+  --orbit-counter-angle: -15deg;
+}
+
+.identity-card__orbit-tech--css {
+  --orbit-angle: 135deg;
+  --orbit-counter-angle: -135deg;
+}
+
+.identity-card__orbit-tech--javascript {
+  --orbit-angle: 255deg;
+  --orbit-counter-angle: -255deg;
 }
 
 .identity-card__spark {
@@ -563,12 +720,22 @@
 @keyframes identity-card-enter {
   from {
     opacity: 0;
-    transform: translateY(3rem) scale(0.98);
+
+    transform:
+      perspective(87.5rem)
+      translateY(3rem)
+      scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+
+    transform:
+      perspective(87.5rem)
+      rotateX(var(--rotate-x))
+      rotateY(var(--rotate-y))
+      translateY(0)
+      scale(1);
   }
 }
 
@@ -586,21 +753,29 @@
   }
 }
 
-@keyframes orbit-rotate {
+@keyframes orbit-clockwise {
   to {
-    transform: rotate(360deg);
+    rotate: 360deg;
   }
 }
 
-@keyframes orbit-rotate-reverse {
+@keyframes orbit-counter-clockwise {
   to {
-    transform: rotate(-360deg);
+    rotate: -360deg;
   }
 }
 
 @media (max-width: 900px) {
   .identity-card__body {
     grid-template-columns: 1fr;
+  }
+
+  .identity-card__orbit-track--outer {
+    --orbit-radius: 9.4rem;
+  }
+
+  .identity-card__orbit-track--middle {
+    --orbit-radius: 6.2rem;
   }
 
   .identity-card__visual {
@@ -623,6 +798,34 @@
 @media (max-width: 600px) {
   .identity-card {
     border-radius: 1.75rem;
+  }
+
+  .identity-card {
+    transform: none;
+  }
+
+  .identity-card:hover {
+    transform: none;
+  }
+
+  .identity-card__content,
+  .identity-card__visual {
+    transform: none;
+  }
+
+  .identity-card__orbit-track--outer {
+    --orbit-radius: 8.35rem;
+  }
+
+  .identity-card__orbit-track--middle {
+    --orbit-radius: 5.5rem;
+  }
+
+  .identity-card__orbit-tech > span {
+    min-height: 1.9rem;
+    padding-inline: 0.65rem;
+
+    font-size: 0.58rem;
   }
 
   .identity-card:hover {
